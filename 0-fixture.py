@@ -11,6 +11,38 @@ def connect_to_db(db_name):
         print(f"Error connecting to database: {e}")
         return None
 
+def drop_table(cursor, table_name):
+    cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
+    print(f"Table {table_name} dropped successfully")
+
+# Функція для створення таблиці changelogs,isuues
+def create_table(cursor):
+
+    conn.execute("""
+        CREATE TABLE changelogs (
+        issue_key text,
+        author_key text,
+        from_status text,
+        to_status text,
+        created_at timestamp without time zone
+        )
+        """
+                 )
+
+    conn.execute("""
+        CREATE TABLE issues (
+        issue_key text,
+        project_key text,
+        issue_type text,
+        assignee_key text,
+        created_at timestamp without time zone
+        )
+        """
+                 )
+
+    conn.commit()
+    print("Tables created successfully")
+
 
 # Функція для виконання SQL команд з файлу
 def execute_sql_from_file(conn, file_path):
@@ -50,6 +82,10 @@ if __name__ == "__main__":
 
     conn = connect_to_db(db_name)
     if conn:
+        drop_table(conn, 'changelogs')
+        drop_table(conn, 'issues')
+
+        create_table(conn)
         clear_tables(conn)
         execute_sql_from_file(conn, file_path)
         conn.close()
