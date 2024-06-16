@@ -204,6 +204,8 @@ def main():
     insert_overlaps(connection, splits)
     create_issue_overlaps_working_hours_table(connection)
     insert_working_hours(connection)
+
+    connection.commit()
     connection.close()
 
 
